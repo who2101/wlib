@@ -584,3 +584,12 @@ char[] CalculateTime(int seconds) {
 	FormatEx(buffer, sizeof(buffer), "%d д. %d ч. %d мин. %d сек.", days, remainingHours, remainingMinutes, remainingSeconds);
 	return buffer;
 }
+
+/*
+	Default SQL_Query but has auto lock and unlock database
+*/
+DBResultSet SQL_QueryEx(Handle database, const char[] query, int len=-1) {
+	SQL_LockDatabase(database);
+	SQL_Query(database, query, len);
+	SQL_UnlockDatabase(database);
+}
