@@ -5,167 +5,6 @@
 
 #define LIBRARY_NAME "wlib"
 
-/* 
-	You can add gamemodes here
-	WARNING: Dont delete GM_CUSTOM 
-*/
-enum Gamemodes {
-	GM_CUSTOM,
-	GM_BHOP,
-	GM_SURF,
-	GM_DE,
-	GM_CS,
-	GM_CTF,
-	GM_AWP,
-	GM_35HP,
-	GM_MULTI1V1,
-	GM_AIM,
-	GM_PROPHUNT,
-	GM_PROPS,
-	GM_DEATHRUN
-}
-
-char cssWeapons[][] = {
-	"weapon_ak47", 
-	"weapon_aug", 
-	"weapon_awp",
-	"weapon_deagle",
-	"weapon_elite", 
-	"weapon_famas",
-	"weapon_fiveseven",
-	"weapon_g3sg1",
-	"weapon_galil",
-	"weapon_glock", 
-	"weapon_m249", 
-	"weapon_m3",
-	"weapon_m4a1", 
-	"weapon_mac10", 
-	"weapon_mp5navy",
-	"weapon_p228", 
-	"weapon_p90", 
-	"weapon_scout",
-	"weapon_sg550", 
-	"weapon_sg552", 
-	"weapon_tmp",
-	"weapon_ump45", 
-	"weapon_usp", 
-	"weapon_xm1014"
-};
-char goWeapons[][] = {
-	"weapon_nova",
-	"weapon_xm1014",
-	"weapon_sawedoff",
-	"weapon_mag7",
-	"weapon_m249",
-	"weapon_negev",
-	"weapon_mac10",
-	"weapon_mp5sd",
-	"weapon_mp7",
-	"weapon_mp9",
-	"weapon_ump45",
-	"weapon_p90",
-	"weapon_bizon",
-	"weapon_galilar",
-	"weapon_famas",
-	"weapon_ak47",
-	"weapon_m4a1",
-	"weapon_m4a1_silencer",
-	"weapon_aug",
-	"weapon_sg556",
-	"weapon_ssg08",
-	"weapon_awp",
-	"weapon_g3sg1",
-	"weapon_scar20",
-	"weapon_glock",
-	"weapon_usp_silencer",
-	"weapon_hkp2000",
-	"weapon_fiveseven",
-	"weapon_elite",
-	"weapon_p250",
-	"weapon_tec9",
-	"weapon_cz75a",
-	"weapon_deagle",
-	"weapon_revolver",
-	"weapon_knife",
-	"weapon_fists",
-	"weapon_hammer",
-	"weapon_spanner",
-	"weapon_axe",
-	"weapon_taser",
-	"weapon_molotov",
-	"weapon_incgrenade",
-	"weapon_decoy",
-	"weapon_flashbang",
-	"weapon_hegrenade",
-	"weapon_smokegrenade",
-	"weapon_tagrenade",
-	"weapon_frag_grenade",
-	"weapon_diversion",
-	"weapon_firebomb",
-	"weapon_snowball"
-};
-
-/*
-	Get weapon list for current game
-	Note: This function return string with weapons from library
-
-	@param buffer Buffer
-	@param length Buffer length
-	
-	@error Game is not CSS or CSGO
-*/
-stock void GetWeaponsList(char[] buffer, int length) {
-	switch(GetEngineVersion()) {
-		case Engine_CSGO: strcopy(buffer, length, goWeapons); // CSGO
-		case Engine_SourceSDK2006: strcopy(buffer, length, cssWeapons); // CSS v34
-		case Engine_CSS: strcopy(buffer, length, cssWeapons); // CSS Steam
-		default: ThrowError("GetWeapons: Library '%s' only for CSS/CSGO", LIBRARY_NAME);
-	}
-}
-
-/*
-	Get weapon list for current game
-	Note: This function return string with weapons from library
-
-	@error Game is not CSS or CSGO
-
-	@return string
-*/
-stock char[] GetWeaponsList2() {
-	switch(GetEngineVersion()) {
-		case Engine_CSGO: return goWeapons; // CSGO
-		case Engine_SourceSDK2006: return cssWeapons; // CSS v34
-		case Engine_CSS: return cssWeapons; // CSS Steam
-		default: ThrowError("GetWeapons: Library '%s' only for CSS/CSGO", LIBRARY_NAME);
-	}
-}
-
-/*
-	Get gamemode
-	Note: If gamemode not found then returns GM_CUSTOM
-	
-	@return Gamemode (enum)
-*/
-stock Gamemodes GetGamemode() {
-	switch(GetCurrentMapPrefix2()) {
-		case "bhop": return GM_BHOP;
-		case "surf": return GM_SURF;
-		case "de": return GM_DE;
-		case "cs": return GM_CS;
-		case "ctf": return GM_CTF;
-		case "awp": return GM_AWP;
-		case "35hp": return GM_35HP;
-		case "am": return GM_MULTI1V1;
-		case "1v1": return GM_MULTI1V1;
-		case "aim": return GM_AIM;
-		case "prop": return GM_PROPHUNT;
-		case "props": return GM_PROPS;
-		case "deathrun": return GM_DEATHRUN;
-		case "dr": return GM_DEATHRUN;
-	}
-	
-	return GM_CUSTOM;
-}
 
 /*
 	Toggles MoveType between MOVETYPE_NONE and MOVETYPE_WALK
@@ -194,7 +33,7 @@ stock void FreezeClient(int client, bool freeze=true) {
 	@param map Map
 	@return string
 */
-stock char[] GetMapPrefix2(char[] map) {
+stock char[] GetMapPrefixEx(char[] map) {
 	char buffer[2][10];
 	ExplodeString(map, "_", buffer, 2, 10);
 	
@@ -206,7 +45,7 @@ stock char[] GetMapPrefix2(char[] map) {
 	
 	@return string
 */
-stock char[] GetCurrentMapPrefix2() {
+stock char[] GetCurrentMapPrefixEx() {
 	char map[64], buffer[2][10];
 	GetCurrentMap(map, 64);
 	ExplodeString(map, "_", buffer, 2, 10);
@@ -247,7 +86,7 @@ stock void GetCurrentMapPrefix(char[] buffer, int length) {
 	
 	@return current map
 */
-stock char[] GetCurrentMap2() {
+stock char[] GetCurrentMapEx() {
 	char map[64];
 	GetCurrentMap(map, 64);
 
@@ -482,10 +321,10 @@ stock char[] GetEntPropString2(int entity, PropType type, const char[] prop, int
 	
 	@param client Client Index
 	
-	@return True on success, false otherwise
+	@return string
 	@error If the client is not connected an error will be thrown.
 */
-stock char[] GetClientName2(int client) {
+stock char[] GetClientNameEx(int client) {
 	static char buffer[128];
 	GetClientName(client, buffer, 128);
 	
@@ -500,7 +339,7 @@ stock char[] GetClientName2(int client) {
 	@return True on success, false otherwise
 	@error If the client is not connected an error will be thrown.
 */
-stock char[] GetClientAuthId2(int client, AuthIdType type=AuthId_Steam2, bool validate=true) {
+stock char[] GetClientAuthIdEx(int client, AuthIdType type=AuthId_Steam2, bool validate=true) {
 	static char buffer[128];
 	GetClientAuthId(client, type, buffer, sizeof(buffer), validate);
 	
@@ -546,7 +385,7 @@ stock void GetTeamPlayers(int &buffer, int team) {
 	}
 }
 
-stock int[] GetTeamPlayers2(int team) {
+stock int[] GetTeamPlayersEx(int team) {
 	int[] buffer = new int[MAXPLAYERS+1];
 	
 	for(int j, i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == team)
@@ -558,7 +397,7 @@ stock int[] GetTeamPlayers2(int team) {
 	return buffer;
 }
 
-stock char[] GetClientIP2(int client, bool remport=true) {
+stock char[] GetClientIPEx(int client, bool remport=true) {
 	char buffer[128];
 	GetClientIP(client, buffer, sizeof(buffer), remport);
 	return buffer;
@@ -571,7 +410,7 @@ stock char[] GetClientIP2(int client, bool remport=true) {
 	
 	@return time string
 */
-char[] CalculateTime(int seconds) {
+stock char[] CalculateTime(int seconds) {
 	char buffer[128];
 
 	int minutes = seconds / 60;
@@ -586,9 +425,34 @@ char[] CalculateTime(int seconds) {
 }
 
 /*
-	Default SQL_Query but has auto lock and unlock database
+	Gets only numbers from steam3
+	
+	@param client Client Index
+	
+	@return SteamID3 but only numbers
 */
-DBResultSet SQL_QueryEx(Handle database, const char[] query, int len=-1) {
+stock int GetClientSteam3(int client) {
+	char auth[128];
+	GetClientAuthId(client, AuthId_Steam3, auth, sizeof(auth));
+
+	ReplaceString(auth, sizeof(auth), "[U:0:", NULL_STRING);
+	ReplaceString(auth, sizeof(auth), "[U:1:", NULL_STRING);
+	ReplaceString(auth, sizeof(auth), "]", NULL_STRING);
+
+	return StringToInt(auth);
+}
+
+/*
+	SQL_Query but with auto lock/unlock database
+	
+	@param database A database Handle
+	@param query Query string
+	@param len Optional parameter to specify the query length, in bytes.
+	
+	@return A new Query Handle on success, INVALID_HANDLE otherwise
+	@error Invalid database handle
+*/
+stock DBResultSet SQL_QueryEx(Handle database, const char[] query, int len=-1) {
 	SQL_LockDatabase(database);
 	DBResultSet results = SQL_Query(database, query, len);
 	SQL_UnlockDatabase(database);
