@@ -590,6 +590,7 @@ char[] CalculateTime(int seconds) {
 */
 DBResultSet SQL_QueryEx(Handle database, const char[] query, int len=-1) {
 	SQL_LockDatabase(database);
-	SQL_Query(database, query, len);
+	DBResultSet results = SQL_Query(database, query, len);
 	SQL_UnlockDatabase(database);
+	return results;
 }
