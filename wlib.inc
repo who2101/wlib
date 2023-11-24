@@ -23,8 +23,9 @@ stock void ToggleFreeze(int client) {
 	@param freeze Freeze or unfreeze
 	@error Invalid client index, client not in game
 */
-stock void FreezeClient(int client, bool freeze=true) {
-	SetEntityMoveType(client, freeze ? MOVETYPE_NONE : MOVETYPE_WALK);
+stock void FreezeClient(int client, bool freeze=true){
+    SetEntityMoveType(client, freeze ? MOVETYPE_NONE : MOVETYPE_WALK);
+    SetEntityFlags(client, freeze ? (GetEntityFlags(client) | FL_FROZEN) : (GetEntityFlags(client) & ~FL_FROZEN));
 }
 
 /*
@@ -458,3 +459,48 @@ stock DBResultSet SQL_QueryEx(Handle database, const char[] query, int len=-1) {
 	SQL_UnlockDatabase(database);
 	return results;
 }
+
+stock void SendPanelToAll(int from, const char[] msg)
+{
+	char title[100];
+	Format(title, 64, "%N:", from);
+	
+	ReplaceString(message, 192, "\\n", "\n");
+	
+	Panel mSayPanel = new Panel();
+	mSayPanel.SetTitle(title);
+	mSayPanel.DrawItem("", ITEMDRAW_SPACER);
+	mSayPanel.DrawText(message);
+	mSayPanel.DrawItem("", ITEMDRAW_SPACER);
+	mSayPanel.CurrentKey = GetMaxPageItems(mSayPanel.Style);
+	mSayPanel.DrawItem("Exit", ITEMDRAW_CONTROL);
+
+	for(int i = 1; i <= MaxClients; i++)
+	{
+		if(IsClientInGame(i) && !IsFakeClient(i))
+		{
+			mSayPanel.Send(i, Handler_DoNothing, 10);
+		}
+	}
+
+	delete mSayPanel;
+}
+
+stock void SendPanelMsgToClient(int client, const char[] title, char[] message)
+{	
+	ReplaceString(message, 192, "\\n", "\n");
+	
+	Panel mSayPanel = new Panel();
+	mSayPanel.SetTitle(title);
+	mSayPanel.DrawItem("", ITEMDRAW_SPACER);
+	mSayPanel.DrawText(message);
+	mSayPanel.DrawItem("", ITEMDRAW_SPACER);
+	mSayPanel.CurrentKey = GetMaxPageItems(mSayPanel.Style);
+	mSayPanel.DrawItem("Exit", ITEMDRAW_CONTROL);
+			
+	mSayPanel.Send(client, Handler_DoNothing, 10);
+
+	delete mSayPanel;
+}
+
+public int Handler_DoNothing(Menu menu, MenuAction action, int param, int param2) {}
