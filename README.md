@@ -1,3 +1,2 @@
-# SourcePawn Include with functions
-
-# Some functions may not work.
+# SourcePawn library
+Some functions may not work
