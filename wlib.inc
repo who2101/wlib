@@ -3,8 +3,30 @@
 #endif
 #define _wlib_included
 
-#define LIBRARY_NAME "wlib"
+#include <cstrike>
+#include <sdktools_functions>
 
+/*
+	Toggles MoveType between MOVETYPE_NONE and MOVETYPE_WALK
+	
+	@param client Client Index
+	@error Invalid client index, client not in game
+*/
+stock bool IsStuckInEnt(int client, int ent){
+	float vecMin[3], vecMax[3], vecOrigin[3];
+	
+	GetClientMins(client, vecMin);
+	GetClientMaxs(client, vecMax);
+	
+	GetClientAbsOrigin(client, vecOrigin);
+	
+	TR_TraceHullFilter(vecOrigin, vecOrigin, vecMin, vecMax, MASK_ALL, TraceRayHitOnlyEnt, ent);
+	return TR_DidHit();
+}
+
+stock bool TraceRayHitOnlyEnt(int entityhit, int mask, data) {
+	return entityhit==data;
+}
 
 /*
 	Toggles MoveType between MOVETYPE_NONE and MOVETYPE_WALK
@@ -13,7 +35,19 @@
 	@error Invalid client index, client not in game
 */
 stock void ToggleFreeze(int client) {
-	SetEntityMoveType(int client, GetEntityMoveType(int client) == MOVETYPE_NONE ? MOVETYPE_WALK : MOVETYPE_NONE);
+	SetEntityMoveType(client, GetEntityMoveType(client) == MOVETYPE_NONE ? MOVETYPE_WALK : MOVETYPE_NONE);
+}
+
+/*
+	Changes player collision
+	
+	@param client 		Client Index
+	@param collision	Collision
+	
+	@error Invalid client index, client not in game
+*/
+stock void ChangePlayerCollision(int client, bool collision) {
+	SetEntData(client, FindSendPropInfo("CBaseEntity", "m_CollisionGroup"), collision?5:2, 4, true);
 }
 
 /*
@@ -29,7 +63,7 @@ stock void FreezeClient(int client, bool freeze=true){
 }
 
 /*
-	Get map prefix
+	Gets map prefix
 	
 	@param map Map
 	@return string
@@ -42,7 +76,7 @@ stock char[] GetMapPrefixEx(char[] map) {
 }
 
 /*
-	Get current map prefix
+	Gets current map prefix
 	
 	@return string
 */
@@ -55,7 +89,7 @@ stock char[] GetCurrentMapPrefixEx() {
 }
 
 /*
-	Get map prefix
+	Gets map prefix
 	
 	@param map		Map
 	@param buffer	Buffer for prefix
@@ -69,7 +103,7 @@ stock void GetMapPrefix(char[] map, char[] buffer, int length) {
 }
 
 /*
-	Get current map prefix
+	Gets current map prefix
 	
 	@param buffer	Buffer for prefix
 	@param length	Buffer length
@@ -83,7 +117,7 @@ stock void GetCurrentMapPrefix(char[] buffer, int length) {
 }
 
 /*
-	Get current map
+	Gets current map
 	
 	@return current map
 */
@@ -95,7 +129,7 @@ stock char[] GetCurrentMapEx() {
 }
 
 /*
-	Get players count in client team
+	Gets players count in client team
 	
 	@param client	Client index
 */
@@ -104,13 +138,11 @@ stock int GetClientTeamCount(int client) {
 }
 
 /*
-	Get server online
+	Gets server online
 	
-	@param alive Only alive players
-	
-	@return online
+	@return value
 */
-stock int GetOnline() {
+stock int GetServerOnline() {
 	int count;
 	
 	for(int i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i))
@@ -122,7 +154,7 @@ stock int GetOnline() {
 }
 
 /*
-	Like % from newer sourcepawn versions
+	% operator for older sp versions
 	
 	@param value	Value
 	@param div		Divider
@@ -132,7 +164,7 @@ stock int IntMod(int value, int div) {
 }
 
 /*
-	Like % from newer sourcepawn versions
+	% operator for older sp versions
 	
 	@param value	Value
 	@param div		Divider
@@ -142,49 +174,9 @@ stock float FloatMod(float value, float div) {
 }
 
 /*
-	Get min or max value from array
-	
-	@param array Array
-	
-	@return value
-*/
-stock int GetIntValue(const int[] array, bool max=true)
-{
-	static int size = sizeof(array[]);
-	static int[] buffer = new int[size];
-	
-	for(int i; i <= size; i++)
-		buffer[i] = array[i];
-	
-	SortIntegers(buffer, size, max ? Sort_Descending : Sort_Ascending);
-
-	return buffer[0];
-}
-
-/*
-	Get min or max value from array
-	
-	@param array Array
-	
-	@return value
-*/
-stock float GetFloatValue(const float[] array, bool max=true)
-{
-	static int size = sizeof(array[]);
-	static float[] buffer = new int[size];
-
-	for(int i; i <= size; i++)
-		buffer[i] = array[i];
-
-	SortFloats(buffer, size, max ? Sort_Descending : Sort_Ascending);
-
-	return buffer[0];
-}
-
-/*
 	Gets count of alive players
 	
-	@param spec Add specs
+	@param spec Add spectators
 	
 	@return value
 */
@@ -237,25 +229,16 @@ stock int GetDeadTeamPlayers(int team) {
 }
 
 /*
-	Check client valid
+	Gets random player
 	
-	@param client Client Index
-	
-	@return true if client in game
-*/
-stock bool IsValidClient(int client) {
-	return IsClientInGame(client) && !IsFakeClient(client);
-}
-
-/*
-	Get random player
+	Note: May not work
 	
 	@return player index
 */
 stock int GetRandomClient() {
 	int[] players = new int[MAXPLAYERS+1];
 
-	for(int i = 1, j = 0; i <= MaxClients; i++) if(IsValidClient(i))
+	for(int i = 1, j = 0; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i))
 	{
 		players[j] = i;
 		j++;
@@ -265,7 +248,7 @@ stock int GetRandomClient() {
 }
 
 /*
-	Delete clients weapons
+	Removes client weapons
 	
 	@param client Client Index
 */
@@ -354,8 +337,15 @@ stock char[] GetClientAuthIdEx(int client, AuthIdType type=AuthId_Steam2, bool v
 	@param duration Alert duration
 	@param msg Message
 	@param ... Format
+	
+	Note: CSGO ONLY
 */
 stock void AlertText(int client=0, int duration, const char[] msg, any ...) {
+	if(GetEngineVersion() != Engine_CSGO) {
+		LogError("wlib::AlertText cant used in this game");
+		return;
+	}
+	
     Event event = CreateEvent("show_survival_respawn_status", true);
 
     static char buff[512];
@@ -376,26 +366,6 @@ stock void AlertText(int client=0, int duration, const char[] msg, any ...) {
             event.FireToClient(i);
 
     event.Close();
-}
-
-stock void GetTeamPlayers(int &buffer, int team) {
-	for(int j, i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == team)
-	{
-		buffer[j] = i;
-		j++;
-	}
-}
-
-stock int[] GetTeamPlayersEx(int team) {
-	int[] buffer = new int[MAXPLAYERS+1];
-	
-	for(int j, i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == team)
-	{
-		buffer[j] = i;
-		j++;
-	}
-	
-	return buffer;
 }
 
 stock char[] GetClientIPEx(int client, bool remport=true) {
@@ -429,10 +399,11 @@ stock char[] CalculateTime(int seconds) {
 	Gets only numbers from steam3
 	
 	@param client Client Index
+	@param onlynumber Only Numbers
 	
 	@return SteamID3 but only numbers
 */
-stock int GetClientSteam3(int client) {
+stock int GetClientSteam3(int client, bool onlynumbers) {
 	char auth[128];
 	GetClientAuthId(client, AuthId_Steam3, auth, sizeof(auth));
 
@@ -453,24 +424,29 @@ stock int GetClientSteam3(int client) {
 	@return A new Query Handle on success, INVALID_HANDLE otherwise
 	@error Invalid database handle
 */
-stock DBResultSet SQL_QueryEx(Handle database, const char[] query, int len=-1) {
+stock DBResultSet SQL_QueryEx(Database database, const char[] query, int len=-1, bool autofetch=false) {
 	SQL_LockDatabase(database);
 	DBResultSet results = SQL_Query(database, query, len);
 	SQL_UnlockDatabase(database);
+
+	if(autofetch) {
+		results.FetchRow();
+	}
+
 	return results;
 }
 
-stock void SendPanelToAll(int from, const char[] msg)
+stock void SendPanelToAll(int from, char[] msg)
 {
 	char title[100];
 	Format(title, 64, "%N:", from);
 	
-	ReplaceString(message, 192, "\\n", "\n");
+	ReplaceString(msg, 192, "\\n", "\n");
 	
 	Panel mSayPanel = new Panel();
 	mSayPanel.SetTitle(title);
 	mSayPanel.DrawItem("", ITEMDRAW_SPACER);
-	mSayPanel.DrawText(message);
+	mSayPanel.DrawText(msg);
 	mSayPanel.DrawItem("", ITEMDRAW_SPACER);
 	mSayPanel.CurrentKey = GetMaxPageItems(mSayPanel.Style);
 	mSayPanel.DrawItem("Exit", ITEMDRAW_CONTROL);
@@ -503,4 +479,6 @@ stock void SendPanelMsgToClient(int client, const char[] title, char[] message)
 	delete mSayPanel;
 }
 
-public int Handler_DoNothing(Menu menu, MenuAction action, int param, int param2) {}
+stock int Handler_DoNothing(Menu menu, MenuAction action, int param, int param2) {
+	return 0;
+}
