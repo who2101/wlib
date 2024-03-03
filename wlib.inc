@@ -46,7 +46,7 @@ stock void ToggleFreeze(int client) {
 	
 	@error Invalid client index, client not in game
 */
-stock void ChangePlayerCollision(int client, bool collision) {
+stock void ChangeEntityCollision(int client, bool collision) {
 	SetEntData(client, FindSendPropInfo("CBaseEntity", "m_CollisionGroup"), collision?5:2, 4, true);
 }
 
