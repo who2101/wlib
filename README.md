@@ -1,2 +1,3 @@
-# SourcePawn library
-Some functions may not work
+## Library with some functions for SourcePawn
+
+Some functions may not work...
