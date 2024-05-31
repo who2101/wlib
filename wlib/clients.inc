@@ -19,6 +19,30 @@ stock void FreezeClient(int client, bool freeze=true){
 }
 
 /*
+	Sets client money
+	
+	@param client Client Index
+	@param money Money
+	@error Invalid entity
+*/
+void SetMoney(int client, int money) {
+	SetEntData(mvp, FindSendPropInfo("CCSPlayer", "m_iAccount"), money, _, true);
+}
+
+/*
+	Adds client money
+	
+	@param client Client Index
+	@param money Money
+	@error Invalid entity
+*/
+void AddMoney(int client, int money) {
+	int offset = FindSendPropInfo("CCSPlayer", "m_iAccount");
+	
+	SetEntData(mvp, offset, GetEntData(mvp, offset)+money, _, true);
+}
+
+/*
 	Toggles MoveType between MOVETYPE_NONE and MOVETYPE_WALK
 	
 	@param client Client Index
@@ -181,7 +205,7 @@ stock char[] GetClientAuthIdEx(int client, AuthIdType type=AuthId_Steam2, bool v
 	
 	@return SteamID3 but only numbers
 */
-stock int GetClientSteam3(int client, bool onlynumbers) {
+stock int GetClientSteam3(int client, bool onlynumbers=true) {
 	char auth[128];
 	GetClientAuthId(client, AuthId_Steam3, auth, sizeof(auth));
 
