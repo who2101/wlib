@@ -7,6 +7,21 @@
 #include <cstrike>
 
 /*
+	Prints message to admins
+	
+	@param fmt Formatting rules.
+	@param any... Variable number of format parameters.
+*/
+stock void PrintToAdmins(const char[] fmt, any ...) {
+	char bfr[1024];
+	VFormat(bfr, sizeof bfr, fmt, 2);
+	
+	for(int i = 1; i <= MaxClients; i++)
+		if(IsClientInGame(i) && !IsFakeClient(i) && GetUserFlagBits(i) & ADMFLAG_ROOT)
+			PrintToChat(i, bfr);
+}
+
+/*
 	Sets client MoveType on MOVETYPE_NONE or MOVETYPE_WALK
 	
 	@param client Client Index
@@ -25,8 +40,8 @@ stock void FreezeClient(int client, bool freeze=true){
 	@param money Money
 	@error Invalid entity
 */
-void SetMoney(int client, int money) {
-	SetEntData(mvp, FindSendPropInfo("CCSPlayer", "m_iAccount"), money, _, true);
+stock void SetClientMoney(int client, int money) {
+	SetEntData(client, FindSendPropInfo("CCSPlayer", "m_iAccount"), money, _, true);
 }
 
 /*
@@ -36,10 +51,21 @@ void SetMoney(int client, int money) {
 	@param money Money
 	@error Invalid entity
 */
-void AddMoney(int client, int money) {
+stock void AddClientMoney(int client, int money) {
 	int offset = FindSendPropInfo("CCSPlayer", "m_iAccount");
 	
-	SetEntData(mvp, offset, GetEntData(mvp, offset)+money, _, true);
+	SetEntData(client, offset, GetEntData(client, offset)+money, _, true);
+}
+
+/*
+	Gets client money
+	
+	@param client Client Index
+	@param money Money
+	@error Invalid entity
+*/
+stock int GetClientMoney(int client) {
+	return GetEntData(client, FindSendPropInfo("CCSPlayer", "m_iAccount"));
 }
 
 /*
