@@ -7,6 +7,47 @@
 #include <cstrike>
 
 /*
+	Replaces player weapon or just giving them
+
+	@error Invalid client index, client not in game
+*/
+stock bool ReplaceWeapon(int client, const char[] weapon, int slot = -1) {
+	if(client <= 0)
+		return false;
+	
+	if(!IsClientInGame(client) || IsFakeClient(client))
+		return false;
+
+	if (slot != -1) {
+		int wpn;
+		
+		if ((wpn = GetPlayerWeaponSlot(client, slot)) != -1)
+			RemoveEntity(wpn);
+	}
+	
+	GivePlayerItem(client, weapon);
+
+	return true;
+}
+
+/*
+	Removes all dropped weapons
+
+	@error Offset 'CBaseCombatWeapon::m_hOwnerEntity' not found
+*/
+stock void RemoveAllDroppedWeapon() {
+	int offset;
+
+	if ((offset = FindSendPropInfo("CBaseCombatWeapon", "m_hOwnerEntity")) == -1)SetFailState("Offset 'CBaseCombatWeapon::m_hOwnerEntity' not found!");
+	
+	char clsname[128];
+	for (int ent = GetEntityCount(); MaxClients < ent; ent--)if (IsValidEdict(ent) && GetEdictClassname(ent, clsname, 8) && strncmp(clsname, "weapon_", 7) == 0 && GetEntDataEnt2(ent, offset) == -1)
+	{
+		RemoveEdict(ent);
+	}
+}
+
+/*
 	Prints message to admins
 	
 	@param fmt Formatting rules.
