@@ -8,3 +8,5 @@
 #include "wlib/entity.inc"
 #include "wlib/time.inc"
 #include "wlib/map.inc"
+#include "wlib/hex.inc"
+#include "wlib/string.inc"
