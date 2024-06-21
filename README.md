@@ -1,3 +1,2 @@
-## Library with some functions for SourcePawn
-
-Some functions may not work...
+# Description
+WLib - Library with some useful functions
