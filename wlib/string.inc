@@ -27,6 +27,20 @@ void removeExtraSpaces(char[] str) {
     str[j] = '\0';
 }
 
+stock char subStr(char[] myString, int startPos, int len = -1)
+{
+    char outStr[MAX_MESSAGE_LENGTH];
+
+    if(len == -1) strcopy(outStr, sizeof outStr, myString[startPos]);
+    else
+    {
+        strcopy(outStr, len, myString[startPos]);
+        outStr[len] = 0;
+    }
+
+    return outStr; 
+}
+
 /*
 	Checks if the whole string consists of spaces
 	
