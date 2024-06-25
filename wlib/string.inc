@@ -8,7 +8,7 @@
 	
 	@param str String
 */
-void removeExtraSpaces(char[] str) {
+stock void removeExtraSpaces(char[] str) {
     int i = 0, j = 0;
     bool space = false;
 
@@ -27,9 +27,9 @@ void removeExtraSpaces(char[] str) {
     str[j] = '\0';
 }
 
-stock char subStr(char[] myString, int startPos, int len = -1)
+stock char[] subStr(char[] myString, int startPos, int len = -1)
 {
-    char outStr[MAX_MESSAGE_LENGTH];
+    char outStr[1024];
 
     if(len == -1) strcopy(outStr, sizeof outStr, myString[startPos]);
     else
@@ -46,7 +46,7 @@ stock char subStr(char[] myString, int startPos, int len = -1)
 	
 	@param str String
 */
-bool IsWhitespaced(const char[] str) {
+stock bool IsWhitespaced(const char[] str) {
 	for(int i; i < strlen(str); i++)
 		if(str[i] != ' ')
 			return false;
