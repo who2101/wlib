@@ -8,7 +8,7 @@
 	
 	Example: #FFFFFF
 */
-char[] GenerateRandomHex() {
+stock char[] GenerateRandomHex() {
 	int r = GetRandomInt(1, 255);
 	int g = GetRandomInt(1, 255);
 	int b = GetRandomInt(1, 255);
@@ -26,7 +26,7 @@ char[] GenerateRandomHex() {
 	
 	@return hex string
 */
-char[] RGBToHex(int color) {
+stock char[] RGBToHex(int color) {
 	int r = color >> 16 & 0xFF;
 	int g = color >> 8 & 0xFF;
 	int b = color & 0xFF;
@@ -44,7 +44,7 @@ char[] RGBToHex(int color) {
 
 	@return decimal digit
 */
-int strtohex(char c) {
+stock int strtohex(char c) {
 	if (c >= '0' && c <= '9')
 		return c - '0';
 	else if (c >= 'A' && c <= 'F')
