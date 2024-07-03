@@ -6,6 +6,47 @@
 #include <sdktools_trace>
 
 /*
+	Gets entity basevelocity
+
+	@param entity Entity Index
+	@param vec    Vector
+*/
+stock void GetBaseVelocity(int entity, float vec[3]) {
+	GetEntPropVector(entity, Prop_Data, "m_vecBaseVelocity", vec);
+}
+
+/*
+	Gets trigger_push push direction
+
+	@param entity Entity Index
+	@param vec    Vector
+*/
+stock void GetTriggerPushDirection(int entity, float vec[3]) {
+	GetEntPropVector(entity, Prop_Data, "m_vecPushDir", vec);
+}
+
+/*
+	Gets trigger_push push speed
+
+	@param entity Entity Index
+
+	@return push speed
+*/
+stock float GetTriggerPushSpeed(int entity) {
+	return GetEntPropFloat(entity, Prop_Data, "m_flSpeed");
+}
+
+/*
+	Sets entity basevelocity
+
+	@param entity Entity Index
+	@param vec    Vector
+*/
+stock void SetBaseVelocity(int entity, const float vec[3]) {
+	SetEntPropVector(entity, Prop_Data, "m_vecBaseVelocity", vec);
+}
+
+/*
 	Toggles MoveType between MOVETYPE_NONE and MOVETYPE_WALK
 	
 	@param client Client Index
