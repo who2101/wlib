@@ -10,3 +10,4 @@
 #include "wlib/map.inc"
 #include "wlib/hex.inc"
 #include "wlib/string.inc"
+#include "wlib/vector.inc"
