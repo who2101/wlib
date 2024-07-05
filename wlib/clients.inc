@@ -283,44 +283,6 @@ stock int GetClientSteam3(int client, bool onlynumbers=true) {
 	return StringToInt(auth);
 }
 
-/*
-	Returns the client`s name.
-	
-	@param client Client Index (If 0 - send to all)
-	@param duration Alert duration
-	@param msg Message
-	@param ... Format
-	
-	Note: CSGO ONLY
-*/
-stock void AlertText(int client=0, int duration, const char[] msg, any ...) {
-	if(GetEngineVersion() != Engine_CSGO) {
-		LogError("wlib::AlertText cant used in this game");
-		return;
-	}
-	
-	Event event = CreateEvent("show_survival_respawn_status", true);
-	
-	static char buff[512];
-	VFormat(buff, sizeof(buff), msg, 4);
-	event.SetString("loc_token", buff);
-	event.SetInt("duration", duration);
-	event.SetInt("userid", -1);
-	
-	if(client) {
-		event.FireToClient(client);
-		event.Close();
-	
-		return;
-	}
-	
-	for(int i = 1; i <= MaxClients; i++)
-		if(IsClientInGame(i) && !IsFakeClient(i))
-			event.FireToClient(i);
-	
-	event.Close();
-}
-
 stock void SendPanelToAll(int from, char[] msg)
 {
 	char title[100];
@@ -347,7 +309,7 @@ stock void SendPanelToAll(int from, char[] msg)
 	delete mSayPanel;
 }
 
-stock void SendPanelMsgToClient(int client, const char[] title, char[] message)
+stock void SendPanelToClient(int client, const char[] title, char[] message)
 {	
 	ReplaceString(message, 192, "\\n", "\n");
 	

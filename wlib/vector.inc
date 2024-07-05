@@ -4,7 +4,8 @@
 	@param vec Vector 1
 	@param add Vector 2
 */
-stock void VectorAdd(float vec[3], float add[3]) {
+stock void VectorAdd(float vec[3], float add[3])
+{
 	vec[0] = vec[0] + add[0];
 	vec[1] = vec[1] + add[1];
 	vec[2] = vec[2] + add[2];
