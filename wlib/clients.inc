@@ -39,7 +39,7 @@ stock void RemoveAllDroppedWeapon() {
 	int offset;
 
 	if ((offset = FindSendPropInfo("CBaseCombatWeapon", "m_hOwnerEntity")) == -1)SetFailState("Offset 'CBaseCombatWeapon::m_hOwnerEntity' not found!");
-	
+
 	char clsname[128];
 	for (int ent = GetEntityCount(); MaxClients < ent; ent--)if (IsValidEdict(ent) && GetEdictClassname(ent, clsname, 8) && strncmp(clsname, "weapon_", 7) == 0 && GetEntDataEnt2(ent, offset) == -1)
 	{
@@ -58,7 +58,7 @@ stock void PrintToAdmins(const char[] fmt, any ...) {
 	VFormat(bfr, sizeof bfr, fmt, 2);
 	
 	for(int i = 1; i <= MaxClients; i++)
-		if(IsClientInGame(i) && !IsFakeClient(i) && GetUserFlagBits(i) & ADMFLAG_ROOT)
+		if(IsClientInGame(i) && !IsFakeClient(i) && GetUserFlagBits(i) & ADMFLAG_GENERIC)
 			PrintToChat(i, bfr);
 }
 
@@ -120,79 +120,15 @@ stock void ToggleFreeze(int client) {
 }
 
 /*
-	Gets players count in client team
-	
-	@param client	Client index
-*/
-stock int GetClientTeamCount(int client) {
-	return GetTeamClientCount(GetClientTeam(client));
-}
-
-/*
 	Gets server online
 	
 	@return value
 */
-stock int GetServerPlayers() {
+stock int GetCurrentPlayers() {
 	int count;
 
 	for(int i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i))
 		count++;
-	
-	return count;
-}
-
-/*
-	Gets count of alive players
-	
-	@param spec Add spectators
-	
-	@return value
-*/
-stock int GetPlayersAlive(bool spec) {
-	int count;
-	
-	for(int i = 1; i <= MaxClients; i++) if (IsClientInGame(i) && !IsFakeClient(i) && IsPlayerAlive(i))
-	{
-		switch(spec) {
-			case true: if (GetClientTeam(i) == 1) count++;
-			case false:count++;
-		}
-	}
-
-	return count;
-}
-
-/*
-	Gets dead players
-	
-	@return value
-*/
-stock int GetDeadPlayers() {
-	int count;
-
-	for(int i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) > 1 && !IsPlayerAlive(i))
-	{
-		count++;
-	}
-	
-	return count;
-}
-
-/*
-	Gets dead players from team
-	
-	@param team Team Index
-	
-	@return value
-*/
-stock int GetDeadTeamPlayers(int team) {
-	int count;
-
-	for(int i = 1; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == team && !IsPlayerAlive(i))
-	{
-		count++;
-	}
 	
 	return count;
 }
@@ -286,7 +222,7 @@ stock int GetClientSteam3(int client, bool onlynumbers=true) {
 stock void SendPanelToAll(int from, char[] msg)
 {
 	char title[100];
-	Format(title, 64, "%N:", from);
+	FormatEx(title, 64, "%N:", from);
 	
 	ReplaceString(msg, 192, "\\n", "\n");
 	
