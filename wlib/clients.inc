@@ -245,7 +245,7 @@ stock void SendPanelToAll(int from, char[] msg)
 	delete mSayPanel;
 }
 
-stock void SendPanelToClient(int client, const char[] title, char[] message)
+stock void SendPanelToClient2(int client, const char[] title, char[] message)
 {	
 	ReplaceString(message, 192, "\\n", "\n");
 	
