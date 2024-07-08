@@ -262,20 +262,6 @@ stock void SetPlayerSpeed(int client, float speed = 1.0)
 }
 
 /**
- * Removes grenades from player
- * @param client  Client Index
- */
-stock void RemoveGrenades(int client)
-{
-	int ent;
-
-	while((ent = GetPlayerWeaponSlot(client, 3)) != -1)
-	{
-		RemoveEdict(ent);
-	}
-}
-
-/**
  * Sends msay panel for client
  * @param client   Client Index
  * @param title    Panel Title
