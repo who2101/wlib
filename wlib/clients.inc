@@ -22,7 +22,7 @@ stock bool ReplaceWeapon(int client, const char[] weapon, int slot = -1) {
 		int wpn;
 		
 		if ((wpn = GetPlayerWeaponSlot(client, slot)) != -1)
-			RemoveEntity(wpn);
+			RemoveEdict(wpn);
 	}
 	
 	GivePlayerItem(client, weapon);
