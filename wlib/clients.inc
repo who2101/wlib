@@ -134,25 +134,6 @@ stock int GetCurrentPlayers() {
 }
 
 /*
-	Gets random player
-	
-	Note: May not work
-	
-	@return player index
-*/
-stock int GetRandomClient() {
-	int[] players = new int[MAXPLAYERS+1];
-
-	for(int i = 1, j = 0; i <= MaxClients; i++) if(IsClientInGame(i) && !IsFakeClient(i))
-	{
-		players[j] = i;
-		j++;
-	}
-
-	return players[GetRandomInt(0, sizeof(players[]))];
-}
-
-/*
 	Removes client weapons
 	
 	@param client Client Index
@@ -168,36 +149,6 @@ stock void StripWeapons(int client) {
 			RemoveEdict(weapon);
 		}
 	}
-}
-
-/*
-	Returns the client`s name.
-	
-	@param client Client Index
-	
-	@return string
-	@error If the client is not connected an error will be thrown.
-*/
-stock char[] GetClientNameEx(int client) {
-	static char buffer[128];
-	GetClientName(client, buffer, 128);
-	
-	return buffer;
-}
-
-/*
-	Returns the client`s name.
-	
-	@param client Client Index
-	
-	@return True on success, false otherwise
-	@error If the client is not connected an error will be thrown.
-*/
-stock char[] GetClientAuthIdEx(int client, AuthIdType type=AuthId_Steam2, bool validate=true) {
-	static char buffer[128];
-	GetClientAuthId(client, type, buffer, sizeof(buffer), validate);
-	
-	return buffer;
 }
 
 /**
