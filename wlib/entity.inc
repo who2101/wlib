@@ -96,6 +96,18 @@ stock char[] GetPropName(int entity) {
 	return Name;
 }
 
+/**
+ * Removes player nades
+ * 
+ * @param client Client Index
+ */
+stock void RemoveNades(int client)
+{
+	SetEntProp(client, Prop_Send, "m_iAmmo", 0, _, 11);
+	SetEntProp(client, Prop_Send, "m_iAmmo", 0, _, 12);
+	SetEntProp(client, Prop_Send, "m_iAmmo", 0, _, 13);
+}
+
 /*
 	Gets a network property as a string
 	
