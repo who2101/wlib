@@ -200,17 +200,18 @@ stock char[] GetClientAuthIdEx(int client, AuthIdType type=AuthId_Steam2, bool v
 	return buffer;
 }
 
-/*
-	Gets only numbers from steam3
-	
-	@param client Client Index
-	@param onlynumber Only Numbers
-	
-	@return SteamID3 but only numbers
-*/
-stock int GetClientSteam3(int client, bool onlynumbers=true) {
+/**
+ * Gets steam3 from client
+ * 
+ * @param Client Client Index
+ * 
+ * @error returns -1 if GetClientAuthId is false
+ */
+stock int GetClientSteam3(int client) {
 	char auth[128];
-	GetClientAuthId(client, AuthId_Steam3, auth, sizeof(auth));
+
+	if(!GetClientAuthId(client, AuthId_Steam3, auth, sizeof(auth)))
+		return -1;
 
 	ReplaceString(auth, sizeof(auth), "[U:0:", NULL_STRING);
 	ReplaceString(auth, sizeof(auth), "[U:1:", NULL_STRING);
@@ -219,6 +220,11 @@ stock int GetClientSteam3(int client, bool onlynumbers=true) {
 	return StringToInt(auth);
 }
 
+/**
+ * Sends msay panel
+ * @param from  Client Index
+ * @param msg   Message
+ */
 stock void SendPanelToAll(int from, char[] msg)
 {
 	char title[100];
@@ -245,6 +251,36 @@ stock void SendPanelToAll(int from, char[] msg)
 	delete mSayPanel;
 }
 
+/**
+ * Sets player speed (m_flLaggedMovementValue)
+ * @param client  Client Index
+ * @param speed   Speed
+ */
+void SetPlayerSpeed(int client, float speed = 1.0)
+{
+	SetEntPropFloat(client, Prop_Send, "m_flLaggedMovementValue", speed);
+}
+
+/**
+ * Removes grenades from player
+ * @param client  Client Index
+ */
+void RemoveGrenades(int client)
+{
+	int ent;
+
+	while((ent = GetPlayerWeaponSlot(client, 3)) != -1)
+	{
+		RemoveEdict(ent);
+	}
+}
+
+/**
+ * Sends msay panel for client
+ * @param client   Client Index
+ * @param title    Panel Title
+ * @param message  Message
+ */
 stock void SendPanelToClient2(int client, const char[] title, char[] message)
 {	
 	ReplaceString(message, 192, "\\n", "\n");
@@ -264,10 +300,4 @@ stock void SendPanelToClient2(int client, const char[] title, char[] message)
 
 stock int Handler_DoNothing(Menu menu, MenuAction action, int param, int param2) {
 	return 0;
-}
-
-stock char[] GetClientIPEx(int client, bool remport=true) {
-	char buffer[128];
-	GetClientIP(client, buffer, sizeof(buffer), remport);
-	return buffer;
 }
