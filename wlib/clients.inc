@@ -256,7 +256,7 @@ stock void SendPanelToAll(int from, char[] msg)
  * @param client  Client Index
  * @param speed   Speed
  */
-void SetPlayerSpeed(int client, float speed = 1.0)
+stock void SetPlayerSpeed(int client, float speed = 1.0)
 {
 	SetEntPropFloat(client, Prop_Send, "m_flLaggedMovementValue", speed);
 }
@@ -265,7 +265,7 @@ void SetPlayerSpeed(int client, float speed = 1.0)
  * Removes grenades from player
  * @param client  Client Index
  */
-void RemoveGrenades(int client)
+stock void RemoveGrenades(int client)
 {
 	int ent;
 
