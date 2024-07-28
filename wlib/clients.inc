@@ -152,6 +152,35 @@ stock void StripWeapons(int client) {
 }
 
 /**
+ * Searches for flags from szFlagString from the client
+ * 
+ * @param client Client Index
+ * @param szFlagString Flags string
+ * 
+ * @return true if found any flag from string
+ */
+stock bool CheckAdminFlagsByString(int client, const char[] szFlagString) {
+	AdminFlag aFlag;
+	int iFlags;
+
+	for (int i = 0; i < strlen(szFlagString); i++)
+	{
+		// flag char can be upper
+		CharToLower(szFlagString[i]);
+
+		if(!FindFlagByChar(szFlagString[i], aFlag))
+			continue;
+			
+		iFlags |= FlagToBit(aFlag);
+		
+		if (GetUserFlagBits(client) & iFlags)
+			return true;
+	}
+
+	return false;
+}
+
+/**
  * Gets steam3 from client
  * 
  * @param Client Client Index
